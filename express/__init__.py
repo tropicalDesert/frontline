@@ -1,3 +1,4 @@
+import ssl
 import socket
 from express import http_manager
 
@@ -16,6 +17,10 @@ def http_socket(host,port):
 	s.bind((host,port))
 	s.listen(5)
 	return s
+
+def https_socket(host,port,kwargs):
+	s=http_socket(host,port)
+	return ssl.wrap_socket(s,**kwargs)
 
 def data_parse(query):
 	data={}
@@ -72,10 +77,13 @@ def dish(socket):
 	response=headers + message
 	conn.send(response.encode("utf-8"))
 	conn.close()
-	return
+	return True
 
-def serve(host,port):
-	s=http_socket(host,port)
+def serve(host,port,https=False):
+	if(https):
+		s=https_socket(host,port,https)
+	else:
+		s=http_socket(host,port)
 	print("Serving " + host + " on port " + str(port))
 	while(True):
 		dish(s)
