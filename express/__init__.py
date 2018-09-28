@@ -20,7 +20,9 @@ def http_socket(host,port):
 
 def https_socket(host,port,kwargs):
 	s=http_socket(host,port)
-	return ssl.wrap_socket(s,**kwargs)
+	context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+	context.load_cert_chain(kwargs['certificate'],kwargs['key'])
+	return context.wrap_socket(s,server_side=True)
 
 def data_parse(query):
 	data={}
@@ -76,7 +78,6 @@ def dish(socket):
 		message=""
 	response=headers + message
 	conn.send(response.encode("utf-8"))
-	conn.close()
 	return True
 
 def serve(host,port,https=False):

